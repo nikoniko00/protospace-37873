@@ -1,4 +1,4 @@
-# DB 設計
+# テーブル 設計
 
 ## users table
 

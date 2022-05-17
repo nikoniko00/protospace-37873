@@ -1,5 +1,6 @@
 class PrototypesController < ApplicationController
   before_action :authenticate_user!, only: [ :new]
+  before_action :move_to_index, except: [:index, :show]
 
   def index
     @prototype = Prototype.includes(:user).order("created_at DESC")
@@ -26,7 +27,7 @@ class PrototypesController < ApplicationController
 
   def edit
     @prototype = Prototype.find(params[:id])
-    unless user_signed_in?
+    unless @prototype.user_id == current_user.id
       redirect_to action: :index
     end
   end
@@ -50,6 +51,13 @@ class PrototypesController < ApplicationController
     end
   end
 
+  def move_to_index
+    #prototype = Prototype.find(params[:id])
+    unless user_signed_in?
+      redirect_to action: :new
+    end
+  end
+
   private
   def prototype_params
     params.require(:prototype).permit(:title, :catch_copy, :concept, :image).merge(user_id: current_user.id)
@@ -60,6 +68,8 @@ class PrototypesController < ApplicationController
   end
 
   def contributor_confirmation
-    redirect_to root_path unless current_user == @prototype.user
+    redirect_to root_path 
+    unless current_user == @prototype.user
+    end
   end
 end
